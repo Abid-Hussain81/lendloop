@@ -1,0 +1,25 @@
+node_modules/
+.next/
+.npm-cache/
+.convex/
+.setup/
+.superpowers/
+.env*
+!.env.example
+!**/.env.example
+coverage/
+*.tsbuildinfo
+automation/data/
+playwright-report/
+test-results/
+
+# Local documentation and agent workspace files are not deliverables.
+*.md
+*.MD
+*.mdx
+*.markdown
+docs/
+.agents/
+.codex/
+.claude/
+.clerk/

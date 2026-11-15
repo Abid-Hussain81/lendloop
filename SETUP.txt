@@ -1,0 +1,109 @@
+LENDLOOP
+========
+
+Neighborhood tool lending built with Next.js, TypeScript, Clerk, Convex,
+and Docker-hosted n8n. Notifications are mock receipts recorded in Convex;
+they do not send email or messages.
+
+REQUIREMENTS
+
+Node.js 22+, npm, Docker Desktop with Linux containers, a Clerk development
+application, and a Convex development deployment (local or cloud).
+
+APPLICATION
+
+1. Run: npm ci
+2. Copy .env.example to .env.local and add your Clerk development keys.
+3. Enable Clerk's Convex integration/JWT template with audience "convex".
+   Integration guide: https://docs.convex.dev/auth/clerk
+4. Run: npx convex dev
+   Select your deployment. This populates CONVEX_DEPLOYMENT and
+   NEXT_PUBLIC_CONVEX_URL and regenerates convex/_generated/.
+5. In that Convex deployment's environment, set CLERK_JWT_ISSUER_DOMAIN
+   to your Clerk issuer URL. Restart convex dev if setup stopped for it.
+6. Keep convex dev running. In another terminal run: npm run dev
+   Open http://localhost:3000 and sign up/sign in.
+
+Without credentials the app displays a setup notice. Live sign-in and
+authenticated browser flows require verification with your own development
+configuration before submission.
+
+ADMINISTRATOR
+
+Create your user in Clerk. Set ADMIN_CLERK_USER_IDS in the Convex deployment
+environment to its user_... ID (or comma-separated IDs). Sign in with that
+user to access Administration. Roles are checked in the backend.
+
+AUTOMATION
+
+1. Generate an ignored local environment file:
+   node scripts/setup-local-automation.mjs
+   This preserves any existing automation/.env.
+2. For cloud Convex, edit CONVEX_SITE_URL in automation/.env to use the
+   deployment's .convex.site URL. The generated local default targets the
+   local Convex backend through host.docker.internal:3211.
+3. Start n8n and its task runner:
+   docker compose -p lendloop-assignment up -d
+4. Open http://localhost:5678 and complete local owner setup.
+5. Import these workflows, in order, through the editor or commands below:
+
+   docker compose -p lendloop-assignment exec n8n n8n import:workflow --input=/workflows/errors.json
+   docker compose -p lendloop-assignment exec n8n n8n import:workflow --input=/workflows/notifications.json
+   docker compose -p lendloop-assignment exec n8n n8n import:workflow --input=/workflows/overdue.json
+
+6. Confirm both main workflows use "LendLoop automation errors" as their
+   error workflow, then publish/activate notifications and overdue.
+7. Set these variables in the Convex deployment environment:
+   CONVEX_TO_N8N_SECRET: same directional value as automation/.env.
+   N8N_TO_CONVEX_SECRET: same reverse-direction value as automation/.env.
+   N8N_WEBHOOK_URL: reachable URL ending /webhook/lendloop-request.
+
+With local Convex, use http://localhost:5678/webhook/lendloop-request.
+With cloud Convex, use a public HTTPS tunnel forwarding only the webhook
+path to n8n. Set WEBHOOK_URL in automation/.env to its HTTPS base URL,
+ending with /, and restart the containers. Keep the editor private.
+N8N_WEBHOOK_PATH must match the exact external request path.
+
+The local editor uses HTTP cookies and Code nodes can access the explicitly
+allowed environment variables. Use HTTPS, secure cookies, restricted editor
+access, and managed secrets for a production deployment.
+
+After changing automation/scripts/*.js, regenerate the JSON exports:
+   npm run workflows:generate
+
+CHECKS
+
+   npm test
+   npm run typecheck
+   npm run build
+   npm run verify:source
+
+Public browser tests target the unconfigured setup state. Before adding
+credentials, install Chromium with "npx playwright install chromium", then
+run "npm run test:browser". These tests do not verify authenticated flows.
+
+The checked-in typed Convex helpers support offline tests. Once connected,
+use "npx convex dev" or "npm run codegen" for official generated helpers.
+
+BEHAVIOR AND LIMITS
+
+Dates are inclusive UTC calendar dates. Pending requests do not reserve
+tools; approvals check overlaps transactionally. Lenders approve/decline;
+either loan participant can mark an approved loan returned. Removing a
+listing archives it while preserving existing loans.
+
+Signed webhooks use HMAC-SHA256 over the timestamp, exact path, and raw body.
+Callbacks enforce replay protection. Mock notifications deduplicate by
+event ID; reminders deduplicate by loan and UTC day. Delivery uses an outbox,
+leases, bounded retries, and failure reporting. This provides idempotent
+mock records; a real notification provider needs its own delivery guarantees.
+
+Lists/history target a small assignment dataset. Production work includes
+pagination, retention, deployment-level concurrency and failure tests,
+monitoring, backups, rate limits, and a real notification provider.
+
+REPOSITORY
+
+Commit application source, tests, workflow exports, and .env.example files.
+Actual keys, runtime state, dependencies, Markdown, and agent planning files
+are ignored. Keep credentials in local files or deployment secret stores.

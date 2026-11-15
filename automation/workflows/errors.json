@@ -1,0 +1,91 @@
+{
+  "id": "LendLoopErrors",
+  "name": "LendLoop automation errors",
+  "active": false,
+  "nodes": [
+    {
+      "id": "FailedExecution",
+      "name": "Workflow failure",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "Signfailurerequest",
+      "name": "Sign failure request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const operation = \"failure\";\n// n8n Code node; the generator prepends a constant `operation`.\nconst crypto = require(\"crypto\");\nconst { URL } = require(\"url\");\nconst secret = $env.N8N_TO_CONVEX_SECRET;\nif (!secret || secret.length < 32) throw new Error(\"Integration signing is not configured\");\nif (![\"overdue\", \"notify\", \"remind\", \"failure\"].includes(operation)) throw new Error(\"Unknown operation\");\nconst base = new URL($env.CONVEX_SITE_URL);\nif (base.protocol !== \"https:\" && !(base.protocol === \"http:\" && [\"localhost\", \"127.0.0.1\", \"host.docker.internal\"].includes(base.hostname))) throw new Error(\"Use HTTPS outside local development\");\nconst path = `/automation/${operation}`;\nreturn $input.all().map(item => {\n  const input = item.json;\n  let payload = {};\n  if (operation === \"notify\") payload = { eventId: input.eventId };\n  if (operation === \"remind\") payload = { loanId: input.loanId, day: input.day };\n  if (operation === \"failure\") {\n    const candidate = String(input.execution?.id || input.trigger?.executionId || \"\");\n    const key = /^[a-zA-Z0-9_-]{1,100}$/.test(candidate) ? candidate : crypto.randomUUID();\n    const name = String(input.workflow?.name || \"\").toLowerCase();\n    payload = { key, workflow: name.includes(\"overdue\") ? \"overdue\" : name.includes(\"notification\") ? \"notification\" : \"unknown\" };\n  }\n  const body = JSON.stringify({ requestId: crypto.randomUUID(), ...payload });\n  const timestamp = `${Math.floor(Date.now() / 1000)}`;\n  const signature = crypto.createHmac(\"sha256\", secret).update(`${timestamp}.${path}.${body}`).digest(\"hex\");\n  return { json: { url: `${base.origin}${path}`, body, headers: {\n    \"Content-Type\": \"application/json\", \"X-LendLoop-Timestamp\": timestamp, \"X-LendLoop-Signature\": signature,\n  } } };\n});\n"
+      }
+    },
+    {
+      "id": "Recordsanitizedfailure",
+      "name": "Record sanitized failure",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1500,
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "={{ JSON.stringify($json.headers) }}",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.body }}",
+        "options": {
+          "timeout": 15000
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Workflow failure": {
+      "main": [
+        [
+          {
+            "node": "Sign failure request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sign failure request": {
+      "main": [
+        [
+          {
+            "node": "Record sanitized failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "UTC",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "all"
+  },
+  "pinData": {},
+  "tags": []
+}
