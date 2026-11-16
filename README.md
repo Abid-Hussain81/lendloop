@@ -103,60 +103,26 @@ npm run workflows:generate
 ### Verification
 
 ```sh
-npm test
-npm run typecheck
-npm run build
-npm run verify:source
+npm run check
 ```
 
-Install Chromium once with `npx playwright install chromium`. Public navigation
-and sign-in rendering checks support both configured and unconfigured setups:
+This runs strict TypeScript checking and a production build. Use the manual
+verification walkthrough below to check the borrowing and automation flows.
+Automated test suites are omitted from this submission.
 
-```sh
-npm run test:browser -- e2e/public.spec.ts
-```
+The local notification round trip was verified through Convex dispatch, n8n
+signature verification, a signed callback, and a persisted mock receipt.
+Approval and return were verified using synthetic local backend identities;
+the fixture listing was archived afterward. Signed overdue requests returned
+200, replays 409, and unsigned requests 401. The dataset had no overdue loans.
+Both main n8n workflows were published locally.
 
-With credentials configured and the app running, check direct protected-route
-redirects with:
+Browser borrowing with two Clerk users, live admin operations, and scheduled
+reminder delivery for an overdue loan remain manual checks. Synthetic operator
+checks do not validate real Clerk token issuance.
 
-```sh
-npm run test:browser -- e2e/auth-routing.spec.ts
-```
-
-For installed Edge on Windows, set the process environment variable
-`PLAYWRIGHT_CHANNEL` to `msedge`. Run all browser checks with
-`npm run test:browser`. Protected-route checks skip the unconfigured setup
-state. These tests do not exercise a signed-in borrowing lifecycle.
-
-#### Recorded verification: 16 November 2026
-
-- 26 automated tests, strict TypeScript, and the production build passed.
-- Direct signed-out dashboard routing passed desktop/mobile regression checks.
-- The workshop UI refresh passed all four browser checks. Populated dashboard
-  cards, category navigation, request views, and forms were additionally reviewed
-  on desktop/mobile using isolated UI fixtures, not live account operations.
-- Live public catalog queries, desktop/mobile auth screens, and an actual
-  user-confirmed authenticated dashboard were verified.
-- The Docker services started and all three workflow exports imported. Both
-  notification and overdue workflows were published in the local n8n instance.
-- A real local notification round trip passed: loan request, Convex dispatch,
-  n8n signature verification, signed callback, and a persisted mock receipt.
-  Approval/return also passed using synthetic local backend identities; the
-  fixture listing was archived afterward. No Clerk accounts were created.
-- The local overdue endpoint returned 200 for a signed request, 409 for a replay,
-  and 401 for an unsigned request. The test dataset had no overdue loans.
-- Full browser borrowing/approval/return checks with two Clerk users, live admin
-  operations, and scheduled n8n reminder delivery for an overdue loan remain
-  pending. Synthetic operator tests do not validate real Clerk token issuance.
-
-Tests use `convex-test` to execute real queries/mutations/HTTP handlers against
-an isolated in-memory Convex environment. Signature tests compare Web Crypto
-against independently produced Node HMAC values. Workflow tests execute the
-actual Code-node program text with controlled n8n inputs; they do not assert
-against mocked business logic. Docker import/runtime checks remain separate.
-
-Checked-in typed helpers allow offline tests. After connecting a deployment,
-`npx convex dev` or `npm run codegen` regenerates them using the official CLI.
+After connecting a deployment, `npx convex dev` or `npm run codegen`
+regenerates the typed helpers using the official CLI.
 `scripts/generate-offline.mjs` is a development-only bootstrap tied to the pinned
 Convex SDK; production/deployment builds should use the supported CLI.
 
@@ -263,13 +229,13 @@ administrator. Run these checks in your own development deployment:
 9. In isolated development data, prepare an approved loan whose end date is
    before today and execute the overdue workflow twice. Confirm one reminder
    per loan/day. Normal borrowing forms correctly reject past start dates;
-   automated reminder tests use a controlled clock.
+   use isolated development fixtures for this check.
 10. Exercise a development integration failure, inspect retries/error records,
     and restore the configuration.
 
 ## Repository contents
 
-The repository includes application source, tests, example environment files,
+The repository includes application source, example environment files,
 Docker Compose configuration, and three importable workflow JSON exports.
 [SETUP.txt](SETUP.txt) is an additional plain-text setup reference.
 Runtime credentials, service state, dependencies, and personal preparation

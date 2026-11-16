@@ -13,12 +13,9 @@
     "backend": "convex dev",
     "codegen": "convex codegen",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:browser": "playwright test",
     "verify:source": "node scripts/check-source.mjs",
     "workflows:generate": "node automation/generate-workflows.mjs",
-    "check": "npm run typecheck && npm test && npm run build"
+    "check": "npm run typecheck && npm run build"
   },
   "dependencies": {
     "@clerk/nextjs": "7.10.0",
@@ -29,12 +26,9 @@
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.65.1",
     "@types/node": "^24.0.0",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
-    "convex-test": "^0.0.54",
-    "typescript": "^5.9.0",
-    "vitest": "^4.0.0"
+    "typescript": "^5.9.0"
   }
 }

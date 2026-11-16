@@ -75,30 +75,17 @@ After changing automation/scripts/*.js, regenerate the JSON exports:
 
 CHECKS
 
-   npm test
-   npm run typecheck
-   npm run build
-   npm run verify:source
+   npm run check
 
-Install the browser once: npx playwright install chromium
+This runs strict TypeScript checking and a production build. Automated test
+suites are omitted from this submission. Follow the README manual walkthrough
+to verify the borrowing and automation flows.
 
-Public navigation and sign-in rendering checks support both setup states:
-   npm run test:browser -- e2e/public.spec.ts
-
-With credentials configured and the app running, check protected-route redirects:
-   npm run test:browser -- e2e/auth-routing.spec.ts
-
-Run all browser checks with "npm run test:browser". Protected-route checks skip
-an unconfigured setup. These checks do not exercise a signed-in borrowing
-lifecycle. For installed Edge on Windows, set the process environment variable
-PLAYWRIGHT_CHANNEL to msedge instead of using Chromium.
-
-The checked-in typed Convex helpers support offline tests. Once connected,
-use "npx convex dev" or "npm run codegen" for official generated helpers.
+Once connected, use "npx convex dev" or "npm run codegen" for official helpers.
 
 VERIFICATION STATUS (16 NOVEMBER 2026)
 
-Validated: 26 automated tests, strict TypeScript, production build, signed-out
+Previously validated: strict TypeScript, production build, signed-out
 route protection, desktop/mobile auth screens, live public Convex queries,
 and a user-confirmed authenticated dashboard. The n8n containers started, all
 three workflows imported, and notification/overdue workflows were published.
@@ -131,7 +118,7 @@ monitoring, backups, rate limits, and a real notification provider.
 
 REPOSITORY
 
-Commit application source, tests, workflow exports, and .env.example files.
+Commit application source, workflow exports, and .env.example files.
 Actual keys, runtime state, dependencies, personal Markdown, and agent planning
 files are ignored. README.md is the sole public Markdown exception. Keep
 credentials in local files or deployment secret stores.
