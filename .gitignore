@@ -12,6 +12,10 @@ coverage/
 automation/data/
 playwright-report/
 test-results/
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini
 
 # Local documentation and agent workspace files are not deliverables.
 *.md
@@ -23,6 +27,7 @@ docs/
 .codex/
 .claude/
 .clerk/
+/INTERVIEW-PREP.pdf
 
 # Separate Clerk starter project; not part of the LendLoop submission.
 /clerk-nextjs/

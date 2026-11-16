@@ -27,9 +27,8 @@ APPLICATION
 6. Keep convex dev running. In another terminal run: npm run dev
    Open http://localhost:3000 and sign up/sign in.
 
-Without credentials the app displays a setup notice. Live sign-in and
-authenticated browser flows require verification with your own development
-configuration before submission.
+Without credentials the app displays a setup notice. Configure your own
+development application and deployment before using authenticated features.
 
 ADMINISTRATOR
 
@@ -81,12 +80,33 @@ CHECKS
    npm run build
    npm run verify:source
 
-Public browser tests target the unconfigured setup state. Before adding
-credentials, install Chromium with "npx playwright install chromium", then
-run "npm run test:browser". These tests do not verify authenticated flows.
+Install the browser once: npx playwright install chromium
+
+Before adding credentials, public setup-state browser checks can be run with:
+   npm run test:browser -- e2e/public.spec.ts
+
+With credentials configured and the app running, check protected-route redirects:
+   npm run test:browser -- e2e/auth-routing.spec.ts
+
+These checks do not exercise a signed-in borrowing lifecycle. The public
+setup-state test intentionally expects the unconfigured UI and should be run
+before supplying credentials. For installed Edge on Windows, set the process
+environment variable PLAYWRIGHT_CHANNEL to msedge instead of using Chromium.
 
 The checked-in typed Convex helpers support offline tests. Once connected,
 use "npx convex dev" or "npm run codegen" for official generated helpers.
+
+VERIFICATION STATUS (16 NOVEMBER 2026)
+
+Validated: 26 automated tests, strict TypeScript, production build, signed-out
+route protection, desktop/mobile auth screens, live public Convex queries,
+and a user-confirmed authenticated dashboard. The n8n containers previously
+started and all three exported workflows imported successfully.
+
+Still pending: a live borrowing/approval/return demonstration with two users,
+live admin operations, and activated n8n workflows executing signed callbacks
+against Convex. Automated function tests cover the underlying rules but do
+not replace those live checks. Full end-to-end verification is not claimed.
 
 BEHAVIOR AND LIMITS
 
