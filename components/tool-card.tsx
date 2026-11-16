@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
-import { BadgeCheck, Wrench } from "lucide-react";
+import { BadgeCheck } from "lucide-react";
+import { CategoryIcon } from "./category-icon";
 import type { FunctionReturnType } from "convex/server";
 import { api } from "@/convex/_generated/api";
 import { dateLabel } from "@/lib/catalog";
@@ -21,7 +22,7 @@ export function ToolCard({
   return (
     <article className="tool-card">
       <div className={`tool-card-art ${tool.category.replaceAll(" ", "-")}`}>
-        <Wrench size={42} strokeWidth={1.1} />
+        <CategoryIcon category={tool.category} size={30} />
         <span className="art-category">{tool.category}</span>
       </div>
       <div className="tool-card-body">

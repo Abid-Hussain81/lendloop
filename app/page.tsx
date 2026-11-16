@@ -2,120 +2,114 @@ import Link from "next/link";
 import {
   ArrowDown,
   ArrowUpRight,
-  Flower2,
+  Check,
   Hammer,
-  Handshake,
-  Repeat2,
+  Sprout,
   Tent,
   Utensils,
+  ArrowRight,
 } from "lucide-react";
 import { PublicTools } from "@/components/public-tools";
+import { WorkshopIllustration } from "@/components/workshop-illustration";
 import { isConfigured } from "@/lib/config";
+
 export default function Home() {
   return (
     <div className="container">
       <section className="hero">
         <div className="hero-copy">
           <p className="eyebrow">
-            <span className="live-dot" /> THE NEIGHBORHOOD TOOL LIBRARY
+            <span className="eyebrow-rule" /> YOUR NEIGHBORHOOD TOOL LIBRARY
           </p>
           <h1>
-            Good tools.
+            The right tool.
             <br />
-            <em>Better neighbors.</em>
+            <span>Already nearby.</span>
           </h1>
           <p className="hero-description">
-            Borrow what you need. Lend what you don’t.
-            <br />
-            Make a little room for sharing.
+            For the job you’ve been putting off, or the project you can’t wait
+            to start. Borrow from a neighbor. Put your own tools to good use.
           </p>
           <div className="hero-actions">
             <Link href="/sign-in" className="button">
-              Sign in to lend or borrow <ArrowUpRight size={18} />
+              Sign in to lend or borrow <ArrowUpRight size={17} />
             </Link>
             <a className="text-link" href="#available">
               Explore the library <ArrowDown size={16} />
             </a>
           </div>
           <p className="hero-note">
-            <Handshake size={16} /> Less buying. More belonging.
+            <Check size={15} /> Pick your dates. Your neighbor confirms.
           </p>
         </div>
-        <div className="sharing-illustration" aria-hidden="true">
-          <span className="illustration-label">SOMETHING USEFUL, SHARED.</span>
-          <div className="orbit">
-            <div className="orbit-center">
-              <Repeat2 size={46} strokeWidth={1.2} />
-            </div>
-            <div className="orbit-icon hammer">
-              <Hammer size={45} strokeWidth={1.25} />
-            </div>
-            <div className="orbit-icon flower">
-              <Flower2 size={45} strokeWidth={1.25} />
-            </div>
-            <div className="orbit-icon tent">
-              <Tent size={45} strokeWidth={1.25} />
-            </div>
-            <div className="orbit-icon kitchen">
-              <Utensils size={40} strokeWidth={1.25} />
-            </div>
-          </div>
-          <p>
-            One neighborhood.
-            <br />
-            <em>So many possibilities.</em>
-          </p>
-          <span className="illustration-corner">↗</span>
-        </div>
+        <WorkshopIllustration />
       </section>
+      <div className="category-strip" aria-label="Tool categories">
+        <span className="category-strip-label">A TOOL FOR EVERY PROJECT</span>
+        <span>
+          <Hammer size={18} /> Power tools
+        </span>
+        <span>
+          <Sprout size={18} /> Garden
+        </span>
+        <span>
+          <Utensils size={18} /> Kitchen
+        </span>
+        <span>
+          <Tent size={18} /> Camping
+        </span>
+      </div>
       <section id="available" className="catalog-section">
         <div className="section-heading">
           <div>
-            <p className="eyebrow">USE IT. RETURN IT. KEEP IT GOING.</p>
-            <h2>What’s in the neighborhood?</h2>
+            <p className="eyebrow">THE NEIGHBORHOOD COLLECTION</p>
+            <h2>Find what you need.</h2>
           </div>
-          <span className="quiet-tag">Available to borrow</span>
+          <span className="quiet-tag">
+            <span className="live-dot" /> Available to borrow
+          </span>
         </div>
         <PublicTools configured={isConfigured()} />
         <p className="catalog-note">
-          Sign in to see details and request a tool. Your neighbors’ information
-          stays private.
+          Sign in for tool details and borrowing dates. Owner information stays
+          private.
         </p>
       </section>
       <section id="how-it-works" className="how-section">
-        <div>
-          <p className="eyebrow">A SIMPLE KIND OF CIRCULAR</p>
-          <h2>
-            Good things
-            <br />
-            <em>come around.</em>
-          </h2>
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">HOW LENDLOOP WORKS</p>
+            <h2>From their shed to your next project.</h2>
+          </div>
+          <Link className="text-link" href="/sign-up">
+            Join the neighborhood <ArrowRight size={16} />
+          </Link>
         </div>
         <ol className="steps">
           <li>
             <span>01</span>
             <div>
-              <h3>Find your next helping hand.</h3>
+              <h3>Find the right tool</h3>
               <p>
-                Browse tools in your neighborhood and choose the dates you need.
+                Browse the library, check the details, and choose the dates you
+                need.
               </p>
             </div>
           </li>
           <li>
             <span>02</span>
             <div>
-              <h3>Ask. Agree. Get to work.</h3>
+              <h3>Make a request</h3>
               <p>
-                Send a request. Your neighbor approves the dates before the loan
-                is confirmed.
+                Your neighbor approves the dates before the loan is confirmed.
               </p>
             </div>
           </li>
           <li>
             <span>03</span>
             <div>
-              <h3>Return it. Pass it on.</h3>
-              <p>Mark the tool returned so it’s ready for the next project.</p>
+              <h3>Return it, ready for the next job</h3>
+              <p>Mark it returned and keep something useful in circulation.</p>
             </div>
           </li>
         </ol>

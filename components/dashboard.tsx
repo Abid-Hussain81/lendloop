@@ -3,7 +3,17 @@ import { useState } from "react";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
-import { Plus, BadgeCheck, Pencil, Trash2, ArrowUpRight } from "lucide-react";
+import {
+  Plus,
+  BadgeCheck,
+  Pencil,
+  Trash2,
+  ArrowUpRight,
+  Wrench,
+  Package,
+  Inbox,
+  CalendarDays,
+} from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import type { Doc, Id } from "@/convex/_generated/dataModel";
 import { categories } from "@/lib/catalog";
@@ -131,9 +141,11 @@ function ConnectedDashboard() {
     <div className="container dashboard">
       <section className="dashboard-heading">
         <div>
-          <p className="eyebrow">LESS IN THE SHED. MORE IN THE NEIGHBORHOOD.</p>
-          <h1>Your little loop.</h1>
-          <p className="muted">Find a useful tool. Share one of your own.</p>
+          <p className="eyebrow">YOUR WORKSPACE</p>
+          <h1>Your tool library.</h1>
+          <p className="muted">
+            Everything you’re sharing, borrowing, and working on.
+          </p>
         </div>
         <button
           className="button"
@@ -145,6 +157,29 @@ function ConnectedDashboard() {
           <Plus size={18} /> List a tool
         </button>
       </section>
+      <div className="workspace-summary" aria-label="Your library overview">
+        <div>
+          <Package size={19} aria-hidden="true" />
+          <span>My listings</span>
+          <strong>{listings?.length ?? "—"}</strong>
+        </div>
+        <div>
+          <CalendarDays size={19} aria-hidden="true" />
+          <span>Active borrowing</span>
+          <strong>
+            {requests?.filter((loan) => loan.status === "approved").length ??
+              "—"}
+          </strong>
+        </div>
+        <div>
+          <Inbox size={19} aria-hidden="true" />
+          <span>Awaiting your reply</span>
+          <strong>
+            {incoming?.filter((loan) => loan.status === "pending").length ??
+              "—"}
+          </strong>
+        </div>
+      </div>
       <nav className="dashboard-tabs" aria-label="Dashboard views">
         {tabs.map((tab) => (
           <button
@@ -182,10 +217,14 @@ function ConnectedDashboard() {
       {view === "browse" && (
         <>
           <div className="catalog-toolbar">
-            <h2>Find your next helping hand.</h2>
+            <div>
+              <p className="eyebrow">THE NEIGHBORHOOD COLLECTION</p>
+              <h2>Explore tools</h2>
+            </div>
             <label className="filter-label">
               Category
               <select
+                aria-label="Filter by category"
                 value={category}
                 onChange={(event) => setCategory(event.target.value)}
               >
@@ -205,7 +244,28 @@ function ConnectedDashboard() {
           ) : !tools.filter(
               (tool) => category === "all" || tool.category === category,
             ).length ? (
-            <Empty text="No tools here just yet. Be the first to share one." />
+            <Empty
+              text={
+                category === "all"
+                  ? "The shelf is ready. Add the first tool."
+                  : "No tools in this category yet."
+              }
+            >
+              <p>
+                {category === "all"
+                  ? "A drill, a ladder, a set of garden shears. Something in your shed could be just what a neighbor needs."
+                  : "Try another category, or share a tool of your own."}
+              </p>
+              <button
+                className="button small-button"
+                onClick={() => {
+                  setEditing(undefined);
+                  setFormOpen(true);
+                }}
+              >
+                <Plus size={16} /> List a tool
+              </button>
+            </Empty>
           ) : (
             <div className="tool-grid">
               {tools
@@ -231,7 +291,7 @@ function ConnectedDashboard() {
       )}
       {view === "listings" && (
         <>
-          <h2 className="view-title">A little of yours, shared.</h2>
+          <h2 className="view-title">My listings</h2>
           {listings === undefined ? (
             <Loading />
           ) : !listings.length ? (
@@ -275,10 +335,10 @@ function ConnectedDashboard() {
         <>
           <h2 className="view-title">
             {view === "requests"
-              ? "The projects you’re planning."
+              ? "My requests"
               : view === "incoming"
-                ? "A neighbor could use a hand."
-                : "Keep the loop running."}
+                ? "Incoming requests"
+                : "All loans"}
           </h2>
           {selectedLoans === undefined ? (
             <Loading />
@@ -392,10 +452,20 @@ function Loading() {
     </p>
   );
 }
-function Empty({ text }: { text: string }) {
+function Empty({
+  text,
+  children,
+}: {
+  text: string;
+  children?: React.ReactNode;
+}) {
   return (
     <div className="empty-state">
-      <p>{text}</p>
+      <span className="empty-icon">
+        <Wrench size={24} strokeWidth={1.5} aria-hidden="true" />
+      </span>
+      <h3>{text}</h3>
+      {children}
     </div>
   );
 }

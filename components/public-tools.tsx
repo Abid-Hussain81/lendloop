@@ -3,6 +3,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Wrench, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import { CategoryIcon } from "./category-icon";
 function Catalog() {
   const tools = useQuery(api.tools.publicList, {});
   if (tools === undefined)
@@ -27,7 +28,7 @@ function Catalog() {
       {tools.map((tool, index) => (
         <li key={`${tool.name}-${index}`}>
           <span className="tool-symbol">
-            <Wrench size={22} strokeWidth={1.5} />
+            <CategoryIcon category={tool.category} size={22} />
           </span>
           <div>
             <span className="category-label">{tool.category}</span>

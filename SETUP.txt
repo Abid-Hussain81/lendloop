@@ -82,16 +82,16 @@ CHECKS
 
 Install the browser once: npx playwright install chromium
 
-Before adding credentials, public setup-state browser checks can be run with:
+Public navigation and sign-in rendering checks support both setup states:
    npm run test:browser -- e2e/public.spec.ts
 
 With credentials configured and the app running, check protected-route redirects:
    npm run test:browser -- e2e/auth-routing.spec.ts
 
-These checks do not exercise a signed-in borrowing lifecycle. The public
-setup-state test intentionally expects the unconfigured UI and should be run
-before supplying credentials. For installed Edge on Windows, set the process
-environment variable PLAYWRIGHT_CHANNEL to msedge instead of using Chromium.
+Run all browser checks with "npm run test:browser". Protected-route checks skip
+an unconfigured setup. These checks do not exercise a signed-in borrowing
+lifecycle. For installed Edge on Windows, set the process environment variable
+PLAYWRIGHT_CHANNEL to msedge instead of using Chromium.
 
 The checked-in typed Convex helpers support offline tests. Once connected,
 use "npx convex dev" or "npm run codegen" for official generated helpers.

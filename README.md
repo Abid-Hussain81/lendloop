@@ -109,8 +109,8 @@ npm run build
 npm run verify:source
 ```
 
-Install Chromium once with `npx playwright install chromium`. Before adding
-credentials, run public setup-state checks with:
+Install Chromium once with `npx playwright install chromium`. Public navigation
+and sign-in rendering checks support both configured and unconfigured setups:
 
 ```sh
 npm run test:browser -- e2e/public.spec.ts
@@ -124,13 +124,17 @@ npm run test:browser -- e2e/auth-routing.spec.ts
 ```
 
 For installed Edge on Windows, set the process environment variable
-`PLAYWRIGHT_CHANNEL` to `msedge`. The public test expects the unconfigured setup
+`PLAYWRIGHT_CHANNEL` to `msedge`. Run all browser checks with
+`npm run test:browser`. Protected-route checks skip the unconfigured setup
 state. These tests do not exercise a signed-in borrowing lifecycle.
 
 #### Recorded verification: 16 November 2026
 
 - 26 automated tests, strict TypeScript, and the production build passed.
 - Direct signed-out dashboard routing passed desktop/mobile regression checks.
+- The workshop UI refresh passed all four browser checks. Populated dashboard
+  cards, category navigation, request views, and forms were additionally reviewed
+  on desktop/mobile using isolated UI fixtures, not live account operations.
 - Live public catalog queries, desktop/mobile auth screens, and an actual
   user-confirmed authenticated dashboard were verified.
 - The Docker services started and all three workflow exports imported.

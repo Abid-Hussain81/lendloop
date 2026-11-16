@@ -5,7 +5,7 @@ import { isConfigured } from "@/lib/config";
 import "./globals.css";
 export const metadata: Metadata = {
   title: {
-    default: "LendLoop — Good tools. Better neighbors.",
+    default: "LendLoop — Your neighborhood tool library",
     template: "%s · LendLoop",
   },
   description:
@@ -16,7 +16,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const configured = isConfigured();
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body>
         <Providers configured={configured}>
           <a className="skip-link" href="#main">
@@ -25,8 +25,12 @@ export default function RootLayout({
           <Header configured={configured} />
           <main id="main">{children}</main>
           <footer className="site-footer container">
-            <span>LendLoop. A little more shared.</span>
-            <span>Made for good neighbors.</span>
+            <span>
+              <strong>LendLoop</strong>{" "}
+              <span className="footer-divider">/</span> Your neighborhood tool
+              library.
+            </span>
+            <span>Borrow what you need. Share what you have.</span>
           </footer>
         </Providers>
       </body>

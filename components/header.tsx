@@ -4,11 +4,14 @@ import { useUser, UserButton } from "@clerk/nextjs";
 import { ArrowUpRight, Repeat2 } from "lucide-react";
 function Account() {
   const { isLoaded, isSignedIn } = useUser();
-  if (!isLoaded) return <span className="muted small">One moment…</span>;
+  if (!isLoaded)
+    return (
+      <span className="account-placeholder" aria-label="Loading account" />
+    );
   return isSignedIn ? (
     <div className="account">
       <Link className="nav-link" href="/dashboard">
-        My neighborhood <ArrowUpRight size={15} />
+        My workspace <ArrowUpRight size={15} />
       </Link>
       <UserButton />
     </div>
@@ -26,9 +29,12 @@ export function Header({ configured }: { configured: boolean }) {
           <span className="brand-mark">
             <Repeat2 size={22} />
           </span>
-          LendLoop<span className="wordmark-dot">.</span>
+          LendLoop
         </Link>
         <nav aria-label="Main navigation">
+          <Link className="nav-link library-link" href="/#available">
+            The library
+          </Link>
           <Link className="nav-link how-link" href="/#how-it-works">
             How it works
           </Link>
