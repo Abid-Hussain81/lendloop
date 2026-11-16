@@ -23,3 +23,6 @@ docs/
 .codex/
 .claude/
 .clerk/
+
+# Separate Clerk starter project; not part of the LendLoop submission.
+/clerk-nextjs/
