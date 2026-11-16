@@ -128,5 +128,6 @@ monitoring, backups, rate limits, and a real notification provider.
 REPOSITORY
 
 Commit application source, tests, workflow exports, and .env.example files.
-Actual keys, runtime state, dependencies, Markdown, and agent planning files
-are ignored. Keep credentials in local files or deployment secret stores.
+Actual keys, runtime state, dependencies, personal Markdown, and agent planning
+files are ignored. README.md is the sole public Markdown exception. Keep
+credentials in local files or deployment secret stores.
