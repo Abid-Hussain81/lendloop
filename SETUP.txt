@@ -100,13 +100,17 @@ VERIFICATION STATUS (16 NOVEMBER 2026)
 
 Validated: 26 automated tests, strict TypeScript, production build, signed-out
 route protection, desktop/mobile auth screens, live public Convex queries,
-and a user-confirmed authenticated dashboard. The n8n containers previously
-started and all three exported workflows imported successfully.
+and a user-confirmed authenticated dashboard. The n8n containers started, all
+three workflows imported, and notification/overdue workflows were published.
+A real local request -> Convex dispatch -> n8n -> signed callback -> mock
+receipt round trip passed. Approval and return passed with synthetic local
+backend identities; the fixture listing was archived. No Clerk users were
+created. Signed overdue requests returned 200, replay 409, unsigned 401;
+the dataset had no overdue loans.
 
-Still pending: a live borrowing/approval/return demonstration with two users,
-live admin operations, and activated n8n workflows executing signed callbacks
-against Convex. Automated function tests cover the underlying rules but do
-not replace those live checks. Full end-to-end verification is not claimed.
+Still pending: a browser borrowing/approval/return demonstration with two Clerk
+users, live admin operations, and scheduled n8n reminder delivery for an overdue
+loan. Synthetic operator tests do not validate real Clerk token issuance.
 
 BEHAVIOR AND LIMITS
 

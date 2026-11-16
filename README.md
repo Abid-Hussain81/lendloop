@@ -137,11 +137,17 @@ state. These tests do not exercise a signed-in borrowing lifecycle.
   on desktop/mobile using isolated UI fixtures, not live account operations.
 - Live public catalog queries, desktop/mobile auth screens, and an actual
   user-confirmed authenticated dashboard were verified.
-- The Docker services started and all three workflow exports imported.
-- Full live two-user borrowing/approval/return checks, live admin operations,
-  and activated n8n workflows executing signed callbacks against Convex remain
-  pending. Function tests cover the underlying rules; full end-to-end execution
-  is not claimed.
+- The Docker services started and all three workflow exports imported. Both
+  notification and overdue workflows were published in the local n8n instance.
+- A real local notification round trip passed: loan request, Convex dispatch,
+  n8n signature verification, signed callback, and a persisted mock receipt.
+  Approval/return also passed using synthetic local backend identities; the
+  fixture listing was archived afterward. No Clerk accounts were created.
+- The local overdue endpoint returned 200 for a signed request, 409 for a replay,
+  and 401 for an unsigned request. The test dataset had no overdue loans.
+- Full browser borrowing/approval/return checks with two Clerk users, live admin
+  operations, and scheduled n8n reminder delivery for an overdue loan remain
+  pending. Synthetic operator tests do not validate real Clerk token issuance.
 
 Tests use `convex-test` to execute real queries/mutations/HTTP handlers against
 an isolated in-memory Convex environment. Signature tests compare Web Crypto
